@@ -109,3 +109,23 @@ export const FiltroIssues = styled.select`
   padding: 10px;
   font-size: 16px;
 `;
+
+export const ButtonsPaginate = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  button {
+    margin: 0 20px;
+    width: 40px;
+    height: 30px;
+    color: white;
+    border: 0px;
+    background: #7159c1;
+    border-radius: 4px;
+  }
+`;
+
+export const HeaderIssue = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;

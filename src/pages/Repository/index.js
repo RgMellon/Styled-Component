@@ -2,8 +2,17 @@ import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
 
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+
 import { Link } from 'react-router-dom';
-import { Loading, Owner, IssueList, FiltroIssues } from './styles';
+import {
+  Loading,
+  Owner,
+  IssueList,
+  FiltroIssues,
+  ButtonsPaginate,
+  HeaderIssue,
+} from './styles';
 
 import Container from '../../components/Container';
 import api from '../../services/api';
@@ -24,6 +33,7 @@ class Repository extends Component {
     stateIssue: 'all',
     repoName: '',
     castigo: false,
+    pageNumber: 1,
   };
 
   async componentDidMount() {
@@ -38,7 +48,7 @@ class Repository extends Component {
 
   // eslint-disable-next-line react/sort-comp
   getReposGitHub = async () => {
-    const { repoName, stateIssue } = this.state;
+    const { repoName, stateIssue, pageNumber } = this.state;
 
     try {
       const [repo, issues] = await Promise.all([
@@ -47,7 +57,7 @@ class Repository extends Component {
           params: {
             state: stateIssue,
             per_page: 5,
-            page: 9,
+            page: pageNumber,
           },
         }),
       ]);
@@ -68,6 +78,15 @@ class Repository extends Component {
 
   handleChange = async event => {
     await this.setState({ stateIssue: event.target.value });
+  };
+
+  handlePaginate = async value => {
+    const { pageNumber } = this.state;
+    await this.setState({
+      pageNumber: value === 'back' ? pageNumber - 1 : pageNumber + 1,
+    });
+
+    this.getReposGitHub();
   };
 
   render() {
@@ -104,11 +123,23 @@ class Repository extends Component {
         </Owner>
 
         <IssueList>
-          <FiltroIssues value={stateIssue} onChange={this.handleChange}>
-            <option value="open">Open</option>
-            <option value="closed">Closed</option>
-            <option value="all">All</option>
-          </FiltroIssues>
+          <HeaderIssue>
+            <FiltroIssues value={stateIssue} onChange={this.handleChange}>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+              <option value="all">All</option>
+            </FiltroIssues>
+
+            <ButtonsPaginate>
+              <button onClick={() => this.handlePaginate('+')}>
+                <FaAngleLeft />
+              </button>
+
+              <button onClick={() => this.handlePaginate('-')}>
+                <FaAngleRight />
+              </button>
+            </ButtonsPaginate>
+          </HeaderIssue>
 
           {issues.map(issue => (
             <li key={String(issue.id)}>
